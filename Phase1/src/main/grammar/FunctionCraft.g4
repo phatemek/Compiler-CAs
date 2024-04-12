@@ -1,9 +1,6 @@
 grammar FunctionCraft;
 
-// Lexer rules
-// The lexer rules define patterns for recognizing tokens like numbers, booleans, strings,
-// comments, keywords, identifiers, and operators in the input text. These rules are used
-// by the lexer to break the input into a token stream.
+//LEXER
 
 //keywords
 
@@ -109,6 +106,7 @@ DIGIT: [0-9];
 INT_VAL: [1-9][0-9]*;
 FLOAT_VAL: INT_VAL '.' [0-9]+;
 STRING_VAL:   '"' ('\\' ["\\] | ~["\\\r\n])* '"';
+BOOL_VAL: TRUE | FALSE;
 
 //ids
 
@@ -120,12 +118,34 @@ SLCOMMENT: '#' ~[\r\n]* -> skip;
 MLCOMMENT: '=begin' ~[=end]* '=end' -> skip;
 WS: [ \t\r\n]+ -> skip;
 
-// TODO
+//PARSER
 
-// Parser rules
-// The parser rules start with the program rule, which defines the overall structure of a
-// valid program. They then specify how tokens can be combined to form declarations, control
-// structures, expressions, assignments, function calls, and other constructs within a program.
-// The parser rules collectively define the syntax of the language.
+program:
+    (function | comment)*
+    main;
 
-// TODO
+comment:
+    SLCOMMENT |
+    MLCOMMENT;
+
+function:
+    DEF IDENTIFIER LPAR function_args RPAR
+    function_body
+    END;
+
+main:
+    DEF MAIN LPAR RPAR
+    function_body
+    END;
+
+function_args:
+    IDENTIFIER COMMA function_args |
+    optional_args COMMA function_args |
+    IDENTIFIER |
+    optional_args;
+
+optional_args:
+    LBRACK assignment_eq (COMMA assignment_eq)* RBRACK;
+
+assignment_eq:
+    IDENTIFIER ASSIGN (INT_VAL | FLOAT_VAL | STRING_VAL | BOOL_VAL | list_val | fptr_val);
