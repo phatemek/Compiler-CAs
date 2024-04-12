@@ -106,6 +106,9 @@ REMEQ: '%=';
 
 LETTER: [a-zA-Z];
 DIGIT: [0-9];
+INT_VAL: [1-9][0-9]*;
+FLOAT_VAL: INT_VAL '.' [0-9]+;
+STRING_VAL:   '"' ('\\' ["\\] | ~["\\\r\n])* '"';
 
 //ids
 
