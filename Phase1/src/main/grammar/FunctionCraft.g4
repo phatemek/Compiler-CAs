@@ -51,9 +51,9 @@ COLON: ':';
 SEMICOLON: ';';
 ARROW: '->';
 QUOT: '"';
+DOT: '.';
 DDOT: '..';
-LINE: '|';
-INDENTATION: '    ';
+INDLINE: '\r    |' | '\n    |' | '\n\t|' | '\r\t|';
 
 //operators
 
@@ -104,7 +104,7 @@ REMEQ: '%=';
 LETTER: [a-zA-Z];
 DIGIT: [0-9];
 INT_VAL: [1-9][0-9]*;
-FLOAT_VAL: INT_VAL '.' [0-9]+;
+FLOAT_VAL: INT_VAL '.' DIGIT+;
 STRING_VAL:   '"' ('\\' ["\\] | ~["\\\r\n])* '"';
 BOOL_VAL: TRUE | FALSE;
 
@@ -121,12 +121,8 @@ WS: [ \t\r\n]+ -> skip;
 //PARSER
 
 program:
-    (function | comment)*
+    (function | pattern)*
     main;
-
-comment:
-    SLCOMMENT |
-    MLCOMMENT;
 
 function:
     DEF IDENTIFIER LPAR function_args RPAR
@@ -145,7 +141,115 @@ function_args:
     optional_args;
 
 optional_args:
-    LBRACK assignment_eq (COMMA assignment_eq)* RBRACK;
+    LBRACK init (COMMA init)* RBRACK;
 
-assignment_eq:
-    IDENTIFIER ASSIGN (INT_VAL | FLOAT_VAL | STRING_VAL | BOOL_VAL | list_val | fptr_val);
+init:
+    IDENTIFIER ASSIGN expression;
+
+expression:
+    (LPAR expression RPAR |
+    value INC |
+    value DEC |
+    NOT expression |
+    MINUS expression |
+    logical_expression |
+    value) expr_prim;
+
+expr_prim:
+    arithmatic_operator expression expr_prim | ;
+
+arithmatic_operator:
+    PLUS |
+    MINUS |
+    MULT |
+    DIV;
+
+value:
+    INT_VAL |
+    FLOAT_VAL |
+    BOOL_VAL |
+    STRING_VAL |
+    list_val |
+    fptr_val |
+    function_call |
+    pattern_call |
+    IDENTIFIER;
+
+list_val:
+   LBRACK expression (COMMA expression)* RBRACK;
+
+logical_expression:
+    LPAR
+    (expression |
+    NOT expression |
+    expression EQL expression |
+    expression NEQL expression |
+    LPAR logical_expression RPAR OR LPAR logical_expression RPAR |
+    LPAR logical_expression RPAR AND LPAR logical_expression RPAR)
+    RPAR;
+
+fptr_val:
+    METHOD LPAR COLON IDENTIFIER RPAR |
+    ARROW LPAR function_args RPAR function_body;
+
+primitive_function:
+    PUSH |
+    PUTS |
+    CHOP |
+    CHOMP |
+    LEN;
+
+function_call:
+    (primitive_function | IDENTIFIER | fptr_val) LPAR (expression (COMMA expression)*)? RPAR;
+
+function_body:
+    (init SEMICOLON |
+    if_scope |
+    for_scope |
+    function_call SEMICOLON |
+    pattern_call SEMICOLON |
+    return_line)*;
+
+if_scope:
+    IF logical_expression function_body (elseif_scope)* (else_scope)? END;
+
+elseif_scope:
+    ELSEIF logical_expression function_body;
+
+else_scope:
+    ELSE function_body;
+
+loop_body:
+    (init SEMICOLON |
+    if_scope |
+    for_scope |
+    function_call SEMICOLON |
+    pattern_call SEMICOLON |
+    return_line)+;
+
+for_scope:
+    LOOP DO (loop_body | next | break)* END |
+    FOR IDENTIFIER IN for_range (loop_body | next | break)* END;
+
+for_range:
+    IDENTIFIER |
+    list_val |
+    LPAR value DDOT value RPAR;
+
+next:
+    NEXT SEMICOLON |
+    NEXT IF logical_expression SEMICOLON;
+
+break:
+    BREAK SEMICOLON |
+    BREAK IF logical_expression SEMICOLON;
+
+return_line:
+    RETURN (init | expression) SEMICOLON;
+
+pattern:
+    PATTERN IDENTIFIER LPAR function_args RPAR
+    (INDLINE logical_expression ASSIGN expression)* SEMICOLON;
+
+pattern_call:
+    IDENTIFIER DOT MATCH LPAR (expression (COMMA expression)*)? RPAR;
