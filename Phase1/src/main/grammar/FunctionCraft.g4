@@ -4,6 +4,9 @@ grammar FunctionCraft;
 
 //keywords
 
+FLOAT_VAL: INT_VAL '.' DIGIT+;
+BOOL_VAL: TRUE | FALSE;
+
 DEF: 'def';
 IF: 'if';
 ELSE: 'else';
@@ -101,16 +104,11 @@ REMEQ: '%=';
 
 //basic
 
+IDENTIFIER: (LETTER|UNDERSCORE)(DIGIT|LETTER|UNDERSCORE)*;
+INT_VAL: ([1-9][0-9]* | [0]);
+STRING_VAL:   '"' ('\\' ["\\] | ~["\\\r\n])* '"';
 LETTER: [a-zA-Z];
 DIGIT: [0-9];
-INT_VAL: [1-9][0-9]*;
-FLOAT_VAL: INT_VAL '.' DIGIT+;
-STRING_VAL:   '"' ('\\' ["\\] | ~["\\\r\n])* '"';
-BOOL_VAL: TRUE | FALSE;
-
-//ids
-
-IDENTIFIER: (LETTER|UNDERSCORE)(DIGIT|LETTER|UNDERSCORE)*;
 
 //comments
 
@@ -134,17 +132,18 @@ main:
     function_body
     END;
 
+ //
 function_args:
-    IDENTIFIER COMMA function_args |
+    expression COMMA function_args |
     optional_args COMMA function_args |
-    IDENTIFIER |
+    expression |
     optional_args;
 
 optional_args:
     LBRACK init (COMMA init)* RBRACK;
 
 init:
-    IDENTIFIER ASSIGN expression;
+    value ASSIGN expression;
 
 expression:
     (LPAR expression RPAR |
@@ -156,7 +155,7 @@ expression:
     value) expr_prim;
 
 expr_prim:
-    arithmatic_operator expression expr_prim | ;
+    (arithmatic_operator expression expr_prim) | ;
 
 arithmatic_operator:
     PLUS |
@@ -164,7 +163,11 @@ arithmatic_operator:
     MULT |
     DIV;
 
+value_from_list:
+    (RPAR expression LPAR | list_val | function_call | IDENTIFIER) ((LBRACK value RBRACK)+);
+
 value:
+    value_from_list |
     INT_VAL |
     FLOAT_VAL |
     BOOL_VAL |
@@ -176,7 +179,8 @@ value:
     IDENTIFIER;
 
 list_val:
-   LBRACK expression (COMMA expression)* RBRACK;
+   LBRACK (expression) (COMMA expression)* RBRACK |
+   LBRACK RBRACK;
 
 logical_expression:
     LPAR
