@@ -137,6 +137,18 @@ public class FunctionCraftBaseListener implements FunctionCraftListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBool_operator(FunctionCraftParser.Bool_operatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBool_operator(FunctionCraftParser.Bool_operatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterArithmatic_operator(FunctionCraftParser.Arithmatic_operatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -185,13 +197,13 @@ public class FunctionCraftBaseListener implements FunctionCraftListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLogical_expression(FunctionCraftParser.Logical_expressionContext ctx) { }
+	@Override public void enterIf_condition(FunctionCraftParser.If_conditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLogical_expression(FunctionCraftParser.Logical_expressionContext ctx) { }
+	@Override public void exitIf_condition(FunctionCraftParser.If_conditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

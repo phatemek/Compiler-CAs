@@ -40,27 +40,34 @@ expression:
     (
     append_line |
     LPAR expression RPAR |
-    value INC |
-    value DEC |
-    NOT expression |
-    MINUS expression |
-    logical_expression |
     value
     ) expr_prim;
 
 expr_prim:
-    (arithmatic_operator expression expr_prim) | ;
+    ((bool_operator | arithmatic_operator) expression expr_prim) | ;
 
 append_line:
-    (IDENTIFIER | list_val | STRING_VAL | value_from_list) APPEND
-    ((IDENTIFIER | list_val | STRING_VAL | expression | value_from_list) APPEND)*
+    (IDENTIFIER | list_val | STRING_VAL | value_from_list) APPEND { System.out.println("Operator: " + "<<"); }
+    ((IDENTIFIER | list_val | STRING_VAL | expression | value_from_list) APPEND { System.out.println("Operator: " + "<<"); })*
     (IDENTIFIER | list_val | STRING_VAL | expression | value_from_list);
 
+bool_operator:
+    name=(
+    EQL |
+    NEQL |
+    LEQ |
+    GEQ |
+    LES |
+    GRT)
+    { System.out.println("Operator: " + $name.text); }
+    ;
+
 arithmatic_operator:
-    PLUS |
+    name=(PLUS |
     MINUS |
     MULT |
-    DIV;
+    DIV)
+    { System.out.println("Operator: " + $name.text); };
 
 value_from_list:
     (list_val | function_call | IDENTIFIER) (LBRACK expression RBRACK)+;
@@ -75,24 +82,24 @@ value:
     fptr_val |
     function_call |
     pattern_call |
-    IDENTIFIER;
+    MINUS value |
+    NOT if_condition |
+    IDENTIFIER |
+    LPAR value RPAR |
+    value INC |
+    value DEC;
 
 list_val:
    LBRACK (expression) (COMMA expression)* RBRACK |
    LBRACK RBRACK;
 
-logical_expression:
-    LPAR
-    (expression |
+if_condition:
+    LPAR(
+    expression |
     NOT LPAR expression RPAR |
-    expression EQL expression |
-    expression NEQL expression |
-    expression LEQ expression |
-    expression GEQ expression |
-    expression LES expression |
-    expression GRT expression |
-    LPAR logical_expression RPAR OR LPAR logical_expression RPAR |
-    LPAR logical_expression RPAR AND LPAR logical_expression RPAR)
+    expression bool_operator expression |
+    if_condition OR if_condition |
+    if_condition AND if_condition)
     RPAR;
 
 fptr_val:
@@ -124,11 +131,11 @@ function_body:
 
 if_scope:
     { System.out.println("Decision: IF"); }
-    IF logical_expression function_body (elseif_scope)* (else_scope)? END;
+    IF if_condition function_body (elseif_scope)* (else_scope)? END;
 
 elseif_scope:
     { System.out.println("Decision: ELSE IF"); }
-    ELSEIF logical_expression function_body;
+    ELSEIF if_condition function_body;
 
 else_scope:
     { System.out.println("Decision: ELSE"); }
@@ -156,12 +163,12 @@ for_range:
 next:
     { System.out.println("Control: NEXT"); }
     (NEXT SEMICOLON |
-    NEXT IF logical_expression SEMICOLON);
+    NEXT IF if_condition SEMICOLON);
 
 break:
     { System.out.println("Control: BREAK"); }
     (BREAK SEMICOLON |
-    BREAK IF logical_expression SEMICOLON);
+    BREAK IF if_condition SEMICOLON);
 
 return_line:
     { System.out.println("RETURN"); }
@@ -170,7 +177,7 @@ return_line:
 pattern:
     PATTERN name=IDENTIFIER { System.out.println("PatternDec: " + $name.text); }
     LPAR function_args RPAR
-    (INDLINE logical_expression ASSIGN expression)* SEMICOLON;
+    (INDLINE if_condition ASSIGN expression)* SEMICOLON;
 
 pattern_call:
     IDENTIFIER DOT MATCH { System.out.println("Built-In: MATCH"); } LPAR (expression (COMMA expression)*)? RPAR;

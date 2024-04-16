@@ -71,6 +71,12 @@ public interface FunctionCraftVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAppend_line(FunctionCraftParser.Append_lineContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link FunctionCraftParser#bool_operator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBool_operator(FunctionCraftParser.Bool_operatorContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link FunctionCraftParser#arithmatic_operator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -95,11 +101,11 @@ public interface FunctionCraftVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitList_val(FunctionCraftParser.List_valContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link FunctionCraftParser#logical_expression}.
+	 * Visit a parse tree produced by {@link FunctionCraftParser#if_condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLogical_expression(FunctionCraftParser.Logical_expressionContext ctx);
+	T visitIf_condition(FunctionCraftParser.If_conditionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link FunctionCraftParser#fptr_val}.
 	 * @param ctx the parse tree

@@ -108,6 +108,16 @@ public interface FunctionCraftListener extends ParseTreeListener {
 	 */
 	void exitAppend_line(FunctionCraftParser.Append_lineContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link FunctionCraftParser#bool_operator}.
+	 * @param ctx the parse tree
+	 */
+	void enterBool_operator(FunctionCraftParser.Bool_operatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link FunctionCraftParser#bool_operator}.
+	 * @param ctx the parse tree
+	 */
+	void exitBool_operator(FunctionCraftParser.Bool_operatorContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link FunctionCraftParser#arithmatic_operator}.
 	 * @param ctx the parse tree
 	 */
@@ -148,15 +158,15 @@ public interface FunctionCraftListener extends ParseTreeListener {
 	 */
 	void exitList_val(FunctionCraftParser.List_valContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link FunctionCraftParser#logical_expression}.
+	 * Enter a parse tree produced by {@link FunctionCraftParser#if_condition}.
 	 * @param ctx the parse tree
 	 */
-	void enterLogical_expression(FunctionCraftParser.Logical_expressionContext ctx);
+	void enterIf_condition(FunctionCraftParser.If_conditionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link FunctionCraftParser#logical_expression}.
+	 * Exit a parse tree produced by {@link FunctionCraftParser#if_condition}.
 	 * @param ctx the parse tree
 	 */
-	void exitLogical_expression(FunctionCraftParser.Logical_expressionContext ctx);
+	void exitIf_condition(FunctionCraftParser.If_conditionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link FunctionCraftParser#fptr_val}.
 	 * @param ctx the parse tree
