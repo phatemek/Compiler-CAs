@@ -1,121 +1,5 @@
 grammar FunctionCraft;
 
-//LEXER
-
-//keywords
-
-FLOAT_VAL: INT_VAL '.' DIGIT+;
-BOOL_VAL: TRUE | FALSE;
-
-DEF: 'def';
-IF: 'if';
-ELSE: 'else';
-ELSEIF: 'elseif';
-END: 'end';
-TRUE: 'true';
-FALSE: 'false';
-METHOD: 'method';
-PATTERN: 'pattern';
-MATCH: 'match';
-NEXT: 'next';
-BREAK: 'break';
-LOOP: 'loop';
-DO: 'do';
-FOR: 'for';
-IN: 'in';
-RETURN: 'return';
-
-//primitive data types
-
-INT: 'int';
-FLOAT: 'float';
-STRING: 'string';
-BOOL: 'bool';
-LIST: 'list';
-FPTR: 'fptr';
-
-//primitive functions
-
-PUSH: 'push';
-PUTS: 'puts';
-CHOP: 'chop';
-CHOMP: 'chomp';
-MAIN: 'main';
-LEN: 'len';
-//KEYWORD: MAIN|DEF|IF|ELSE|ELSEIF|END|TRUE|FALSE|CHOP|CHOMP|PUSH|PUTS|METHOD|LEN|PATTERN|MATCH|NEXT|BREAK|LOOP|DO|FOR|IN|RETURN;
-
-//symbols
-
-UNDERSCORE: '_';
-LBRACE: '{';
-RBRACE: '}';
-COMMA: ',';
-COLON: ':';
-SEMICOLON: ';';
-ARROW: '->';
-QUOT: '"';
-DOT: '.';
-DDOT: '..';
-INDLINE: '\r    |' | '\n    |' | '\n\t|' | '\r\t|';
-
-//operators
-
-LPAR: '(';
-RPAR: ')';
-LBRACK: '[';
-RBRACK: ']';
-
-//arithmatic operators
-
-DEC: '--';
-INC: '++';
-MULT: '*';
-DIV: '/';
-PLUS: '+';
-MINUS: '-';
-
-//comparison operators
-
-LEQ: '<=';
-GEQ: '>=';
-LES: '<';
-GRT: '>';
-EQL: '==';
-NEQL: '!=';
-
-//logical operators
-
-AND: '&&';
-OR: '||';
-NOT: '!';
-
-//append
-
-APPEND: '<<';
-
-//assignment operators
-
-ASSIGN: '=';
-PLUSEQ: '+=';
-MINUSEQ: '-=';
-MULTEQ: '*=';
-DIVEQ: '/=';
-REMEQ: '%=';
-
-//basic
-
-IDENTIFIER: (LETTER|UNDERSCORE)(DIGIT|LETTER|UNDERSCORE)*;
-INT_VAL: ([1-9][0-9]* | [0]);
-STRING_VAL:   '"' ('\\' ["\\] | ~["\\\r\n])* '"';
-LETTER: [a-zA-Z];
-DIGIT: [0-9];
-
-//comments
-
-SLCOMMENT: '#' ~[\r\n]* -> skip;
-MLCOMMENT: '=begin' ~[=end]* '=end' -> skip;
-WS: [ \t\r\n]+ -> skip;
-
 //PARSER
 
 program:
@@ -157,9 +41,9 @@ expression:
     ) expr_prim;
 
 append_line:
-    (IDENTIFIER | list_val | STRING_VAL) APPEND
-    ((IDENTIFIER | list_val | STRING_VAL | expression) APPEND)*
-    (IDENTIFIER | list_val | STRING_VAL | expression);
+    (IDENTIFIER | list_val | STRING_VAL | value_from_list) APPEND
+    ((IDENTIFIER | list_val | STRING_VAL | expression | value_from_list) APPEND)*
+    (IDENTIFIER | list_val | STRING_VAL | expression | value_from_list);
 
 expr_prim:
     (arithmatic_operator expression expr_prim) | ;
@@ -192,16 +76,20 @@ list_val:
 logical_expression:
     LPAR
     (expression |
-    NOT expression |
+    NOT LPAR expression RPAR |
     expression EQL expression |
     expression NEQL expression |
+    expression LEQ expression |
+    expression GEQ expression |
+    expression LES expression |
+    expression GRT expression |
     LPAR logical_expression RPAR OR LPAR logical_expression RPAR |
     LPAR logical_expression RPAR AND LPAR logical_expression RPAR)
     RPAR;
 
 fptr_val:
     METHOD LPAR COLON IDENTIFIER RPAR |
-    ARROW LPAR function_args RPAR function_body;
+    ARROW LPAR function_args RPAR LBRACE function_body RBRACE;
 
 primitive_function:
     PUSH |
@@ -265,3 +153,109 @@ pattern:
 
 pattern_call:
     IDENTIFIER DOT MATCH LPAR (expression (COMMA expression)*)? RPAR;
+
+//LEXER
+
+ //keywords
+
+ FLOAT_VAL: INT_VAL '.' DIGIT+;
+ BOOL_VAL: TRUE | FALSE;
+
+ DEF: 'def';
+ IF: 'if';
+ ELSE: 'else';
+ ELSEIF: 'elseif';
+ END: 'end';
+ TRUE: 'true';
+ FALSE: 'false';
+ METHOD: 'method';
+ PATTERN: 'pattern';
+ MATCH: 'match';
+ NEXT: 'next';
+ BREAK: 'break';
+ LOOP: 'loop';
+ DO: 'do';
+ FOR: 'for';
+ IN: 'in';
+ RETURN: 'return';
+
+ //primitive functions
+
+ PUSH: 'push';
+ PUTS: 'puts';
+ CHOP: 'chop';
+ CHOMP: 'chomp';
+ MAIN: 'main';
+ LEN: 'len';
+
+ //symbols
+
+ UNDERSCORE: '_';
+ LBRACE: '{';
+ RBRACE: '}';
+ COMMA: ',';
+ COLON: ':';
+ SEMICOLON: ';';
+ ARROW: '->';
+ QUOT: '"';
+ DOT: '.';
+ DDOT: '..';
+ INDLINE: '\r    |' | '\n    |' | '\n\t|' | '\r\t|';
+
+ //operators
+
+ LPAR: '(';
+ RPAR: ')';
+ LBRACK: '[';
+ RBRACK: ']';
+
+ //arithmatic operators
+
+ DEC: '--';
+ INC: '++';
+ MULT: '*';
+ DIV: '/';
+ PLUS: '+';
+ MINUS: '-';
+
+ //comparison operators
+
+ LEQ: '<=';
+ GEQ: '>=';
+ LES: '<';
+ GRT: '>';
+ EQL: '==';
+ NEQL: '!=';
+
+ //logical operators
+
+ AND: '&&';
+ OR: '||';
+ NOT: '!';
+
+ //append
+
+ APPEND: '<<';
+
+ //assignment operators
+
+ ASSIGN: '=';
+ PLUSEQ: '+=';
+ MINUSEQ: '-=';
+ MULTEQ: '*=';
+ DIVEQ: '/=';
+ REMEQ: '%=';
+
+ //basic
+
+ IDENTIFIER: (LETTER|UNDERSCORE)(DIGIT|LETTER|UNDERSCORE)*;
+ INT_VAL: ([1-9][0-9]* | [0]);
+ STRING_VAL:   '"' ('\\' ["\\] | ~["\\\r\n])* '"';
+ LETTER: [a-zA-Z];
+ DIGIT: [0-9];
+
+ //comments
+
+ SLCOMMENT: '#' ~[\r\n]* -> skip;
+ MLCOMMENT: '=begin' ~[=end]* '=end' -> skip;
+ WS: [ \t\r\n]+ -> skip;
