@@ -41,6 +41,12 @@ public interface FunctionCraftVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOptional_args(FunctionCraftParser.Optional_argsContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link FunctionCraftParser#optional_arg}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOptional_arg(FunctionCraftParser.Optional_argContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link FunctionCraftParser#init}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -53,17 +59,17 @@ public interface FunctionCraftVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpression(FunctionCraftParser.ExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link FunctionCraftParser#append_line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAppend_line(FunctionCraftParser.Append_lineContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link FunctionCraftParser#expr_prim}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExpr_prim(FunctionCraftParser.Expr_primContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FunctionCraftParser#append_line}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAppend_line(FunctionCraftParser.Append_lineContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link FunctionCraftParser#arithmatic_operator}.
 	 * @param ctx the parse tree

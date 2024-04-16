@@ -53,6 +53,13 @@ public class FunctionCraftBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitOptional_arg(FunctionCraftParser.Optional_argContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitInit(FunctionCraftParser.InitContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -67,14 +74,14 @@ public class FunctionCraftBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAppend_line(FunctionCraftParser.Append_lineContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpr_prim(FunctionCraftParser.Expr_primContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpr_prim(FunctionCraftParser.Expr_primContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAppend_line(FunctionCraftParser.Append_lineContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -77,6 +77,18 @@ public class FunctionCraftBaseListener implements FunctionCraftListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOptional_arg(FunctionCraftParser.Optional_argContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOptional_arg(FunctionCraftParser.Optional_argContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterInit(FunctionCraftParser.InitContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -101,18 +113,6 @@ public class FunctionCraftBaseListener implements FunctionCraftListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAppend_line(FunctionCraftParser.Append_lineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAppend_line(FunctionCraftParser.Append_lineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterExpr_prim(FunctionCraftParser.Expr_primContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -120,6 +120,18 @@ public class FunctionCraftBaseListener implements FunctionCraftListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpr_prim(FunctionCraftParser.Expr_primContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAppend_line(FunctionCraftParser.Append_lineContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAppend_line(FunctionCraftParser.Append_lineContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

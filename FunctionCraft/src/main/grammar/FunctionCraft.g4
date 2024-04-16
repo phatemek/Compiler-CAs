@@ -4,10 +4,12 @@ grammar FunctionCraft;
 
 program:
     (function | pattern)*
-    { System.out.println("MAIN"); }main;
+    { System.out.println("MAIN"); }
+    main;
 
 function:
-    DEF IDENTIFIER LPAR function_args RPAR
+    DEF name=IDENTIFIER { System.out.println("FuncDec: " + $name.text); }
+    LPAR function_args RPAR
     function_body
     END;
 
@@ -23,10 +25,16 @@ function_args:
     optional_args;
 
 optional_args:
-    LBRACK init (COMMA init)* RBRACK;
+    LBRACK optional_arg (COMMA optional_arg)* RBRACK;
+
+optional_arg:
+    IDENTIFIER ASSIGN expression;
 
 init:
-    value ASSIGN expression;
+    (
+    (name=IDENTIFIER (LBRACK expression RBRACK)+ |
+    name=IDENTIFIER) { System.out.println("Assignment: " + $name.text); })
+    ASSIGN expression;
 
 expression:
     (
@@ -40,13 +48,13 @@ expression:
     value
     ) expr_prim;
 
+expr_prim:
+    (arithmatic_operator expression expr_prim) | ;
+
 append_line:
     (IDENTIFIER | list_val | STRING_VAL | value_from_list) APPEND
     ((IDENTIFIER | list_val | STRING_VAL | expression | value_from_list) APPEND)*
     (IDENTIFIER | list_val | STRING_VAL | expression | value_from_list);
-
-expr_prim:
-    (arithmatic_operator expression expr_prim) | ;
 
 arithmatic_operator:
     PLUS |
@@ -55,7 +63,7 @@ arithmatic_operator:
     DIV;
 
 value_from_list:
-    (RPAR expression LPAR | list_val | function_call | IDENTIFIER) ((LBRACK value RBRACK)+);
+    (list_val | function_call | IDENTIFIER) (LBRACK expression RBRACK)+;
 
 value:
     value_from_list |
@@ -89,17 +97,21 @@ logical_expression:
 
 fptr_val:
     METHOD LPAR COLON IDENTIFIER RPAR |
+    { System.out.println("Structure: LAMBDA"); }
     ARROW LPAR function_args RPAR LBRACE function_body RBRACE;
 
 primitive_function:
-    PUSH |
+    name=(PUSH |
     PUTS |
     CHOP |
     CHOMP |
-    LEN;
+    LEN)
+    { System.out.println("Built-In: " + $name.text.toUpperCase()); }
+    ;
 
 function_call:
-    (primitive_function | IDENTIFIER | fptr_val) LPAR (expression (COMMA expression)*)? RPAR;
+    (primitive_function) LPAR (expression (COMMA expression)*)? RPAR |
+    { System.out.println("Function Call"); } (IDENTIFIER | fptr_val) LPAR (expression (COMMA expression)*)? RPAR;
 
 function_body:
     (init SEMICOLON |
@@ -111,12 +123,15 @@ function_body:
     return_line)*;
 
 if_scope:
+    { System.out.println("Decision: IF"); }
     IF logical_expression function_body (elseif_scope)* (else_scope)? END;
 
 elseif_scope:
+    { System.out.println("Decision: ELSE IF"); }
     ELSEIF logical_expression function_body;
 
 else_scope:
+    { System.out.println("Decision: ELSE"); }
     ELSE function_body;
 
 loop_body:
@@ -128,7 +143,9 @@ loop_body:
     return_line)+;
 
 for_scope:
+    { System.out.println("Loop: DO"); }
     LOOP DO (loop_body | next | break)* END |
+    { System.out.println("Loop: FOR"); }
     FOR IDENTIFIER IN for_range (loop_body | next | break)* END;
 
 for_range:
@@ -137,22 +154,26 @@ for_range:
     LPAR value DDOT value RPAR;
 
 next:
-    NEXT SEMICOLON |
-    NEXT IF logical_expression SEMICOLON;
+    { System.out.println("Control: NEXT"); }
+    (NEXT SEMICOLON |
+    NEXT IF logical_expression SEMICOLON);
 
 break:
-    BREAK SEMICOLON |
-    BREAK IF logical_expression SEMICOLON;
+    { System.out.println("Control: BREAK"); }
+    (BREAK SEMICOLON |
+    BREAK IF logical_expression SEMICOLON);
 
 return_line:
+    { System.out.println("RETURN"); }
     RETURN (init | expression) SEMICOLON;
 
 pattern:
-    PATTERN IDENTIFIER LPAR function_args RPAR
+    PATTERN name=IDENTIFIER { System.out.println("PatternDec: " + $name.text); }
+    LPAR function_args RPAR
     (INDLINE logical_expression ASSIGN expression)* SEMICOLON;
 
 pattern_call:
-    IDENTIFIER DOT MATCH LPAR (expression (COMMA expression)*)? RPAR;
+    IDENTIFIER DOT MATCH { System.out.println("Built-In: MATCH"); } LPAR (expression (COMMA expression)*)? RPAR;
 
 //LEXER
 
@@ -200,7 +221,7 @@ pattern_call:
  QUOT: '"';
  DOT: '.';
  DDOT: '..';
- INDLINE: '\r    |' | '\n    |' | '\n\t|' | '\r\t|';
+ INDLINE: '\r\n    |' | '\n    |' | '\n\t|' | '\r\n\t|';
 
  //operators
 

@@ -58,6 +58,16 @@ public interface FunctionCraftListener extends ParseTreeListener {
 	 */
 	void exitOptional_args(FunctionCraftParser.Optional_argsContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link FunctionCraftParser#optional_arg}.
+	 * @param ctx the parse tree
+	 */
+	void enterOptional_arg(FunctionCraftParser.Optional_argContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link FunctionCraftParser#optional_arg}.
+	 * @param ctx the parse tree
+	 */
+	void exitOptional_arg(FunctionCraftParser.Optional_argContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link FunctionCraftParser#init}.
 	 * @param ctx the parse tree
 	 */
@@ -78,16 +88,6 @@ public interface FunctionCraftListener extends ParseTreeListener {
 	 */
 	void exitExpression(FunctionCraftParser.ExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link FunctionCraftParser#append_line}.
-	 * @param ctx the parse tree
-	 */
-	void enterAppend_line(FunctionCraftParser.Append_lineContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link FunctionCraftParser#append_line}.
-	 * @param ctx the parse tree
-	 */
-	void exitAppend_line(FunctionCraftParser.Append_lineContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link FunctionCraftParser#expr_prim}.
 	 * @param ctx the parse tree
 	 */
@@ -97,6 +97,16 @@ public interface FunctionCraftListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpr_prim(FunctionCraftParser.Expr_primContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link FunctionCraftParser#append_line}.
+	 * @param ctx the parse tree
+	 */
+	void enterAppend_line(FunctionCraftParser.Append_lineContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link FunctionCraftParser#append_line}.
+	 * @param ctx the parse tree
+	 */
+	void exitAppend_line(FunctionCraftParser.Append_lineContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link FunctionCraftParser#arithmatic_operator}.
 	 * @param ctx the parse tree
