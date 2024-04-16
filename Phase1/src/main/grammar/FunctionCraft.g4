@@ -132,11 +132,10 @@ main:
     function_body
     END;
 
- //
 function_args:
-    expression COMMA function_args |
+    IDENTIFIER COMMA function_args |
     optional_args COMMA function_args |
-    expression |
+    IDENTIFIER |
     optional_args;
 
 optional_args:
@@ -146,13 +145,21 @@ init:
     value ASSIGN expression;
 
 expression:
-    (LPAR expression RPAR |
+    (
+    append_line |
+    LPAR expression RPAR |
     value INC |
     value DEC |
     NOT expression |
     MINUS expression |
     logical_expression |
-    value) expr_prim;
+    value
+    ) expr_prim;
+
+append_line:
+    (IDENTIFIER | list_val | STRING_VAL) APPEND
+    ((IDENTIFIER | list_val | STRING_VAL | expression) APPEND)*
+    (IDENTIFIER | list_val | STRING_VAL | expression);
 
 expr_prim:
     (arithmatic_operator expression expr_prim) | ;
@@ -212,6 +219,7 @@ function_body:
     for_scope |
     function_call SEMICOLON |
     pattern_call SEMICOLON |
+    expression SEMICOLON |
     return_line)*;
 
 if_scope:
