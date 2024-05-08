@@ -11,11 +11,29 @@ import java.util.Map;
 public class SymbolTable {
     public static SymbolTable top;
     public static SymbolTable root;
+    private static SymbolTable pre;
     private static Stack<SymbolTable> stack = new Stack<>();
     private Map<String, SymbolTableItem> items;
+
+    public void add(String key, SymbolTableItem val){
+        items.put(key, val);
+    }
+
+    public void copyItem(SymbolTable symbolTable){
+        for (String key : items.keySet()) {
+            try{
+                symbolTable.add(key, items.get(key));
+            }
+            catch (ItemAlreadyExists ignore){
+            }
+        }
+    }
+
     public static void push(SymbolTable symbolTable) {
-        if (top != null)
+        if (top != null) {
+            top.copyItem(symbolTable);
             stack.push(top);
+        }
         top = symbolTable;
     }
     public static void pop() {
