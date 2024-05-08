@@ -376,7 +376,14 @@ expression returns [Expression expRet]:
     e1 = expression a = APPEND e2 = eqaulityExpression
     //TODO:construct append expression node.the left most expression is appendee and others are appended.
     {
-    $expRet = AppendExpression($e1.expRet);
+    AppendExpression $expRet = new AppendExpression();
+    if($e1.expRet instanceof AppendExpression) {
+        $expRet.setAppendeds($e1.expRet.getAppendeds());
+        $expRet.setAppendee($e1.expRet.getAppendee());
+    }
+    else {
+        $expRet.setAppendee($e1.expRet);
+    }
     $expRet.addAppendedExpression($e2.expRet);
     }
     | e3 = eqaulityExpression {$expRet = $e3.expRet;};
