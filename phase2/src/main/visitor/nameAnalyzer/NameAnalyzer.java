@@ -144,7 +144,7 @@ public class NameAnalyzer extends Visitor<Void> {
         try{
             symbolTable.put(iteratorId);
         }catch (ItemAlreadyExists ignore){}
-//        identifier.accept(this);
+
         for (Expression expression:forStatement.getRangeExpressions())
             expression.accept(this);
 
