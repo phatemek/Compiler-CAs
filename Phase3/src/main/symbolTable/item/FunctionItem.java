@@ -25,8 +25,6 @@ public class FunctionItem extends SymbolTableItem{
         this.name = this.functionDeclaration.getFunctionName().getName();
     }
 
-
-
     public SymbolTable getFunctionSymbolTable() {
         return functionSymbolTable;
     }

@@ -85,8 +85,6 @@ public class TypeChecker extends Visitor<Type> {
         //TODO:Figure out whether return types of functions are not the same.
         //done
         SymbolTable.pop();
-        if (returnTypes.isEmpty())
-            return new NoType();
         return returnTypes.get(0);
         //TODO:Return the infered type of the function
         //done
@@ -131,36 +129,48 @@ public class TypeChecker extends Visitor<Type> {
         if(accessExpression.isFunctionCall()){
             //TODO:function is called here.set the arguments type and visit its declaration
             //done
+            FunctionItem functionItem = null;
             try{
-                FunctionItem functionItem = (FunctionItem)SymbolTable.root.getItem(FunctionItem.START_KEY +
+                functionItem = (FunctionItem)SymbolTable.root.getItem(FunctionItem.START_KEY +
                         ((Identifier)accessExpression.getAccessedExpression()).getName());
-                ArrayList<Type> argTypes = new ArrayList<>();
-                for (Expression arg : accessExpression.getArguments()) {
-                    argTypes.add(arg.accept(this));
-                }
-                functionItem.setArgumentTypes(argTypes);
-                Type functionType = functionItem.getFunctionDeclaration().accept(this);
-                if (functionType instanceof NoType){
+            }catch (ItemNotFound fptr){
+                try {
+                    VarItem varItem = (VarItem)SymbolTable.top.getItem("VAR:"+
+                            ((Identifier)accessExpression.getAccessedExpression()).getName());
+                    if (!(varItem.getType() instanceof FptrType)){
+                        return new NoType();
+                    }
+                    try {
+                        functionItem = (FunctionItem) SymbolTable.root.getItem("Function:" +
+                                        ((FptrType)varItem.getType()).getFunctionName());
+                    }catch (ItemNotFound ignored){}
+                }catch (ItemNotFound ignored){}
+            }
+            ArrayList<Type> argTypes = new ArrayList<>();
+            for (Expression arg : accessExpression.getArguments()) {
+                argTypes.add(arg.accept(this));
+            }
+            functionItem.setArgumentTypes(argTypes);
+            Type functionType = functionItem.getFunctionDeclaration().accept(this);
+            if (functionType instanceof NoType){
+                return new NoType();
+            }
+            if (!accessExpression.getDimentionalAccess().isEmpty()){
+                Type type = accessExpression.getDimentionalAccess().get(0).accept(this);
+                if (!(type instanceof IntType)){
+                    typeErrors.add(new AccessIndexIsNotInt(accessExpression.getLine()));
                     return new NoType();
                 }
-                if (!accessExpression.getDimentionalAccess().isEmpty()){
-                    Type type = accessExpression.getDimentionalAccess().get(0).accept(this);
-                    if (!(type instanceof IntType)){
-                        typeErrors.add(new AccessIndexIsNotInt(accessExpression.getLine()));
-                        return new NoType();
-                    }
-                    // TODO nemidoonam NoType ro che konam
-                    if (!(functionType instanceof StringType) && !(functionType instanceof ListType)){
-                        typeErrors.add(new IsNotIndexable(accessExpression.getLine()));
-                        return new NoType();
-                    }
-                    if (functionType instanceof StringType)
-                        return new StringType();
-                    return ((ListType)functionType).getType();
+                // TODO nemidoonam NoType ro che konam
+                if (!(functionType instanceof StringType) && !(functionType instanceof ListType)){
+                    typeErrors.add(new IsNotIndexable(accessExpression.getLine()));
+                    return new NoType();
                 }
-                return functionType;
-            }catch (ItemNotFound ignored){}
-            return new NoType();
+                if (functionType instanceof StringType)
+                    return new StringType();
+                return ((ListType)functionType).getType();
+            }
+            return functionType;
         }
         else{
             Type accessedType = accessExpression.getAccessedExpression().accept(this);
@@ -204,9 +214,8 @@ public class TypeChecker extends Visitor<Type> {
     }
     @Override
     public Type visit(ExpressionStatement expressionStatement){
-        //
-        System.out.println(expressionStatement.getLine());
         return expressionStatement.getExpression().accept(this);
+
     }
     @Override
     public Type visit(ForStatement forStatement){
